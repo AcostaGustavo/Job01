@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="ClassTime.Backend/ClassTime.Backend.csproj" Id="b3a48c88-883c-43e6-adb3-8d081967dc95" />
+  <Project Path="ConsoleApp1.Frotend/ConsoleApp1.Frotend.csproj" Id="01dd0753-cf09-4a47-bd37-79a4883e5273" />
+</Solution>
