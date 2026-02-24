@@ -1,2 +1,2 @@
 # Job01
-Este repositorio es sobre el taller 01 de POO
+This repository is about the OOP workshop 01.
