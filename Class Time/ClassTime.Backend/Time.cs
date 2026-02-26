@@ -1,91 +1,187 @@
-﻿
-namespace ClassTime.Backend;
-public class Time  //Fields
+﻿namespace ClassTime.Backend;
+
+public class Time
 {
     private int _hour;
-    private int _millisecond;
     private int _minute;
     private int _second;
+    private int _millisecond;
 
-    //Empty Builder 
+    // Constructor 1
     public Time()
     {
-        _hour = 0;
-        _millisecond = 0;
-        _minute = 0;
-        _second = 0;    
-    }
-    
-    //Builder 2
-    public Time( int hour)
-    {
-        _hour = hour;
+        Hour = 0;
+        Minute = 0;
+        Second = 0;
+        Millisecond = 0;
     }
 
-    //Builder 3
+    // Constructor 2
+    public Time(int hour)
+    {
+        Hour = hour;
+        Minute = 0;
+        Second = 0;
+        Millisecond = 0;
+    }
+
+    // Constructor 3
     public Time(int hour, int minute)
     {
-        _hour = hour;
-        _minute = minute;
+        Hour = hour;
+        Minute = minute;
+        Second = 0;
+        Millisecond = 0;
     }
 
-    //Builder 4
+    // Constructor 4
     public Time(int hour, int minute, int second)
     {
-        _hour = hour;
-        _minute = minute;
-        _second = second;
+        Hour = hour;
+        Minute = minute;
+        Second = second;
+        Millisecond = 0;
     }
-    //Builder 5
+
+    // Constructor 5
     public Time(int hour, int minute, int second, int millisecond)
     {
-        _hour = hour;
-        _minute = minute;
-        _second = second;
-        _millisecond = millisecond;
+        Hour = hour;
+        Minute = minute;
+        Second = second;
+        Millisecond = millisecond;
     }
 
-    //Properties
-    public int Hour {
+    // Properties
+    public int Hour
+    {
         get => _hour;
-        set => _hour = value;
+        set => _hour = ValidateHour(value);
     }
-    public int Millisecond { 
-        get => _millisecond;
-        set => _millisecond = value;
-    }
-    public int Minute {
+
+    public int Minute
+    {
         get => _minute;
-        set => _minute = value;
+        set => _minute = ValidateMinute(value);
     }
-    public int Second {
+
+    public int Second
+    {
         get => _second;
-        set => _second = value;
+        set => _second = ValidateSecond(value);
     }
 
-    public object Add(Time t3)
+    public int Millisecond
     {
-        throw new NotImplementedException();
+        get => _millisecond;
+        set => _millisecond = ValidateMillisecond(value);
     }
 
-    public bool IsOtherDay(Time t4)
+    // Validations
+    private int ValidateHour(int value)
     {
-        throw new NotImplementedException();
+        if (value < 0 || value > 23)
+            throw new Exception( $"The hour: {value}, is not valid.");
+
+        return value;
     }
 
-    public object ToMilliseconds()
+    private int ValidateMinute(int value)
     {
-        throw new NotImplementedException();
+        if (value < 0 || value > 59)
+            throw new ArgumentOutOfRangeException(nameof(Minute),
+                $"The minute: {value}, is not valid.");
+
+        return value;
     }
 
-    public object ToMinutes()
+    private int ValidateSecond(int value)
     {
-        throw new NotImplementedException();
+        if (value < 0 || value > 59)
+            throw new ArgumentOutOfRangeException(nameof(Second),
+                $"The second: {value}, is not valid.");
+
+        return value;
     }
 
-    public object ToSecons()
+    private int ValidateMillisecond(int value)
     {
-        throw new NotImplementedException();
+        if (value < 0 || value > 999)
+            throw new ArgumentOutOfRangeException(nameof(Millisecond),
+                $"The millisecond: {value}, is not valid.");
+
+        return value;
     }
+
+    // Convert methods
+    public long ToMilliseconds()
+    {
+        return ((long)Hour * 3600 + (long)Minute * 60 + Second) * 1000 + Millisecond;
+    }
+
+    public long ToSecons()
+    {
+        return (long)Hour * 3600 + (long)Minute * 60 + Second;
+    }
+
+    public long ToMinutes()
+    {
+        return (long)Hour * 60 + Minute;
+    }
+
+    // Add method
+    public Time Add(Time other)
+    {
+        int millisecond = this.Millisecond + other.Millisecond;
+        int carrySecond = millisecond / 1000;
+        millisecond %= 1000;
+
+        int second = this.Second + other.Second + carrySecond;
+        int carryMinute = second / 60;
+        second %= 60;
+
+        int minute = this.Minute + other.Minute + carryMinute;
+        int carryHour = minute / 60;
+        minute %= 60;
+
+        int hour = this.Hour + other.Hour + carryHour;
+        hour %= 24;
+
+        return new Time(hour, minute, second, millisecond);
+    }
+
+    // Check if next day
+    public bool IsOtherDay(Time other)
+    {
+        int millisecond = this.Millisecond + other.Millisecond;
+        int carrySecond = millisecond / 1000;
+
+        int second = this.Second + other.Second + carrySecond;
+        int carryMinute = second / 60;
+
+        int minute = this.Minute + other.Minute + carryMinute;
+        int carryHour = minute / 60;
+
+        int hour = this.Hour + other.Hour + carryHour;
+
+        return hour > 23;
+    }
+
+    //Format 12-hour clock
+    public override string ToString()
+    {
+        string period = Hour >= 12 ? "PM" : "AM";
+
+        int hour12;
+
+        if (Hour == 0)
+            hour12 = 0;
+        else if (Hour > 12)
+            hour12 = Hour - 12;
+        else
+            hour12 = Hour;
+
+        return $"{hour12:00}:{Minute:00}:{Second:00}.{Millisecond:000} {period}";
+    }
+
 }
-

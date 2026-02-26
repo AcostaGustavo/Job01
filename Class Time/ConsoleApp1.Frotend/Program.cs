@@ -1,5 +1,10 @@
 ﻿
 using ClassTime.Backend;
+using System.Globalization;
+
+// FORZAR separador de miles con coma
+CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
+CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en-US");
 
 try
 {
@@ -13,11 +18,12 @@ try
     foreach (Time time in times)
     {
         Console.WriteLine($"Time: {time}");
-        Console.WriteLine($"\tMilliseconds: {time.ToMilliseconds (), 15: NO}");
-        Console.WriteLine($"\tSeconds:      {time.ToSecons(),15: NO}");
-        Console.WriteLine($"\tMinutes:      {time.ToMinutes(),15: NO}");
-        Console.WriteLine($"\tAdd:          {time.Add(t3),15: NO}");
+        Console.WriteLine($"\tMilliseconds: {time.ToMilliseconds(),15:N0}");
+        Console.WriteLine($"\tSeconds     : {time.ToSecons(),15:N0}");
+        Console.WriteLine($"\tMinutes     : {time.ToMinutes(),15:N0}");
+        Console.WriteLine($"\tAdd         : {time.Add(t3),15:N0}");
         Console.WriteLine($"\tIs other day: {time.IsOtherDay(t4)}");
+        Console.WriteLine(); //agregue para generar salto de linea
     }
 
     var t6 = new Time(45, -7, 90, -87);
@@ -25,5 +31,5 @@ try
 catch (Exception exception)
 {
 
-	Console.WriteLine(exception.ToString());
+	Console.WriteLine(exception.Message); //elimine ToString porque obtenia el tipo + mensaje
 }
